@@ -13,9 +13,11 @@
   hosts: web:&{{ env }}
   gather_facts: false
   become: yes
+  vars:
+    python_package: "{{ python_version == '2' | ternary('python-simplejson', 'python3-simplejson') }}"
   tasks:
-    - name: Install Python 2.x
-      raw: which python || sudo apt-get update && sudo apt-get install -qq -y python-simplejson
+    - name: Install Python
+      raw: which python || sudo apt-get update && sudo apt-get install -qq -y {{ python_package }}
       register: python_check
       changed_when: python_check.stdout is not search('/usr/bin/python')
 
